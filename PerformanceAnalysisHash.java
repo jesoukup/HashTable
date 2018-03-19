@@ -20,6 +20,9 @@ public class PerformanceAnalysisHash<K, V> implements PerformanceAnalysis {
     private long hashSearchMemory;
     private long tmapSearchTime;
     private long tmapSearchMemory;
+    private String fileName;
+    private String operationType;
+    private String structureType;
     
     public PerformanceAnalysisHash(){
     }
@@ -37,25 +40,46 @@ public class PerformanceAnalysisHash<K, V> implements PerformanceAnalysis {
     public void compareDataStructures() {
         //TODO: Complete this function which compares the ds and generates the details
         compareInsertion();
-        compareDeletion();
-        compareSearch();
     }
 
     @Override
     public void printReport() {
         //TODO: Complete this method
-        System.out.println(hashInsertTime);
-        System.out.println(hashInsertMemory);
-        System.out.println(tmapInsertTime);
-        System.out.println(tmapInsertMemory);
-        System.out.println(hashDeleteTime);
-        System.out.println(hashDeleteMemory);
-        System.out.println(tmapDeleteTime);
-        System.out.println(tmapDeleteMemory);
-        System.out.println(hashSearchTime);
-        System.out.println(hashSearchMemory);
-        System.out.println(tmapSearchTime);
-        System.out.println(tmapSearchMemory);
+    	System.out.println("------------------------------------------------------------------------------------------------");
+    	System.out.println("|            FileName|      Operation| Data Structure|   Time Taken (micro sec)|     Bytes Used|");
+    	System.out.println("------------------------------------------------------------------------------------------------");
+    	
+    	printHelper("PUT", "HASHTABLE", hashInsertTime, hashInsertMemory);
+    	printHelper("PUT", "TREEMAP", tmapInsertTime, tmapInsertMemory);
+    	printHelper("GET", "HASHTABLE", hashSearchTime, hashSearchMemory);
+    	printHelper("GET", "TREEMAP", tmapSearchTime, tmapSearchMemory);
+    	printHelper("REMOVE", "HASHTABLE", hashDeleteTime, hashDeleteMemory);
+    	printHelper("REMOVE", "TREEMAP", tmapDeleteTime, tmapDeleteMemory);
+    	System.out.println("------------------------------------------------------------------------------------------------");
+    }
+    
+    private void printHelper(String operationType, String structureType, long time, long mem) {
+    	System.out.print("|");
+    	for (int i = 0; i < 20 - fileName.length(); i++) {
+    		System.out.print(" ");
+    	}
+    	System.out.print(fileName + "|");
+    	for (int i = 0; i < 15 - operationType.length(); i++) {
+    		System.out.print(" ");
+    	}
+    	System.out.print(operationType + "|");
+    	for (int i = 0; i < 15 - structureType.length(); i++) {
+    		System.out.print(" ");
+    	}
+    	System.out.print(structureType + "|");
+    	for (int i = 0; i < 25 - String.valueOf(time).length(); i++) {
+    		System.out.print(" ");
+    	}
+    	System.out.print(time + "|");
+    	for (int i = 0; i < 15 - String.valueOf(mem).length(); i++) {
+    		System.out.print(" ");
+    	}
+    	System.out.println(mem + "|");
     }
 
     @Override
@@ -66,25 +90,24 @@ public class PerformanceAnalysisHash<K, V> implements PerformanceAnalysis {
     }
     
     private void compareHashInsertion() {
-        long curTime = System.nanoTime();
+        long current = System.nanoTime();
         long curMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-        hash = new HashTable<K, V>(10, .75); 
+        hash = new HashTable<K, V>(10, .75);
         for (int i = 0; i < inputData.size(); i++) {
             hash.put(i, inputData.get(i));
         }
-        hashInsertTime = System.nanoTime() - curTime;
-        hashInsertMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() - curMem;
+        hashInsertTime = System.nanoTime() - current;
+        hashInsertMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
     }
     
     private void compareTreeMapInsertion() {
-        long curTime = System.nanoTime();
-        long curMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        long current = System.nanoTime();
         tmap = new TreeMap();
         for (int i = 0; i < inputData.size(); i++) {
             tmap.put(i, inputData.get(i));
         }
-        tmapInsertTime = System.nanoTime() - curTime;
-        tmapInsertMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() - curMem;
+        tmapInsertTime = System.nanoTime() - current;
+        tmapInsertMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
     }
 
     @Override
@@ -166,9 +189,10 @@ public class PerformanceAnalysisHash<K, V> implements PerformanceAnalysis {
     public void loadData(String filename) throws IOException {
 
         // Opens the given test file and stores the objects each line as a string
+    	fileName= filename.substring(5);
         File file = new File(filename);
         BufferedReader br = new BufferedReader(new FileReader(file));
-//        inputData = new ArrayList<>();
+//      inputData = new ArrayList<>();
         String line = br.readLine();
         while (line != null) {
             inputData.add(line);
