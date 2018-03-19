@@ -3,7 +3,7 @@ public class AnalysisTest {
 
                 // TODO Add code for checking command line arguments
                 
-                PerformanceAnalysisHash ana = new PerformanceAnalysisHash("IntegerLarge.txt");
+                PerformanceAnalysisHash ana = new PerformanceAnalysisHash("data\\IntegerLarge.txt");
                 ana.compareDataStructures();
                 ana.printReport();
             }
