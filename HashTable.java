@@ -32,7 +32,7 @@ public class HashTable<K, V> implements HashTableADT<K, V> {
     }
     
     // returns hash index
-    public int hash(K key) {
+    private int hash(K key) {
         int hashIndex = (int) Math.abs(key.hashCode() % table.size());
         return hashIndex;
     }
@@ -59,12 +59,12 @@ public class HashTable<K, V> implements HashTableADT<K, V> {
         table.set(hashIndex, newNode);
         numberOfItems++;
         if ((numberOfItems * 1.0 / table.size()) >= loadFactor) {
-            ArrayList<Node<K, V>> newTable =  table;
+            ArrayList<Node<K, V>> oldTable =  table;
             table = new ArrayList<Node<K, V>>();
-            for (int i = 0; i < newTable.size() * 2; i++) {
+            for (int i = 0; i < oldTable.size() * 2; i++) {
                 table.add(null);
             }
-            for (Node<K, V> node : newTable) {
+            for (Node<K, V> node : oldTable) {
                 if (node != null) {
                     int newHashIndex = (hash(node.key));
                     table.set(newHashIndex, node);
@@ -82,12 +82,12 @@ public class HashTable<K, V> implements HashTableADT<K, V> {
             throw new NoSuchElementException(); 
         } 
         else {
-            Node<K, V> head = table.get(hashIndex);
-            while (head != null) {
-                if (head.key.equals(key)) {
-                    return head.value;
+            Node<K, V> node = table.get(hashIndex);
+            while (node != null) {
+                if (node.key.equals(key)) {
+                    return node.value;
                 }
-                head = head.next;
+                node = node.next;
             }
         }
         return null;
@@ -96,8 +96,8 @@ public class HashTable<K, V> implements HashTableADT<K, V> {
     @Override
     public void clear() {
        //TODO: Implement this method
-        for (Node<K, V> node : table) {
-            node = null;
+        for (int i = 0; i < table.size(); i++) {
+            table.remove(i);
         }
         numberOfItems = 0;
     }
@@ -111,7 +111,27 @@ public class HashTable<K, V> implements HashTableADT<K, V> {
     @Override
     public V remove(K key) {
        //TODO: Implement the remove method
-        return null;
+        int hashIndex = hash(key);
+        Node<K, V> node = table.get(hashIndex);
+        Node<K, V> prev = null;
+        while (node != null) {
+            if (node.key.equals(key)) {
+                break;
+            }
+            prev = node;
+            node = node.next;
+        }
+        if (node == null) {
+            return null;
+        }
+        numberOfItems--;
+        if (prev != null) {
+            prev.next = node.next;
+        }
+        else {
+            table.set(hashIndex, node.next);
+        }
+        return node.value;
     }
 
     @Override
@@ -120,28 +140,24 @@ public class HashTable<K, V> implements HashTableADT<K, V> {
         return numberOfItems;
     }
     
-    private int print() {
-        return table.size();
-    }
-    
-    public static void main(String[] args) {
-        HashTable hash = new HashTable(3, .7);
-        hash.put(1, "hi");
-        hash.put(17, "hiasdf");
-        hash.put(3, "hif");
-        System.out.println(hash.size());
-        hash.put(2, "hasdff");
-        hash.put(25, "ggsi");
-        System.out.println(hash.size());
-        hash.put(45, "laksdjf");
-        hash.put(67, "fruit");
-        hash.put(78, "carrot");
-        hash.put(123, "12341");
-        hash.put(67, "78");
-        hash.put(8, "tyrj");
-        System.out.println(hash.get(2));
-        System.out.println(hash.get(8));
-        System.out.println(hash.hash(8));
-        System.out.println(hash.print());
-    }
+//    public static void main(String[] args) {
+//        HashTable<Integer, String> hash = new HashTable<Integer, String>(3, .7);
+//        hash.put(1, "hi");
+//        hash.put(17, "hiasdf");
+//        hash.put(3, "hif");
+//        hash.put(2, "hasdff");
+//        hash.put(25, "ggsi");
+//        hash.put(45, "laksdjf");
+//        hash.put(67, "fruit");
+//        hash.put(78, "carrot");
+//        hash.put(123, "12341");
+//        hash.put(67, "78");
+//        hash.put(8, "tyrj");
+//        System.out.println(hash.get(3));
+//        System.out.println(hash.get(8));
+//        System.out.println(hash.remove(3));
+//        System.out.println(hash.get(3));
+//        hash.clear();
+//        System.out.println(hash.size());
+//    }
 }

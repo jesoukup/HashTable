@@ -8,7 +8,7 @@ public interface PerformanceAnalysis {
 
     /**
      * The important function that compares the implemented HashTable with
-     * TreeMap of Java and generates the table with all the comparision details
+     * TreeMap of Java and generates the table with all the comparison details
      * This can internally call - compareInsertion, compareDeletion, CompareSearch
      * for all the test data provided.
      */
