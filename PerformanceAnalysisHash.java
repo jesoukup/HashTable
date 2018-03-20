@@ -2,33 +2,39 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
+/**
+ * This class compares the TreeMap with the HashTable to see which one is more efficient with memory and speed
+ */
 public class PerformanceAnalysisHash<K, V> implements PerformanceAnalysis {
-
-    // The input data from each file is stored in this/ per file
-    private ArrayList<String> inputData = new ArrayList<>();
-    private HashTable hash;
-    private TreeMap tmap;
-    private long hashInsertTime;
+    private ArrayList<String> inputData = new ArrayList<>(); // This arraylist stores each line of the file
+    private HashTable hash; // This is our hash table
+    private TreeMap tmap; // This is our tree map
+    private long hashInsertTime; // These variables store each method's speeds or memory
     private long hashInsertMemory;
     private long tmapInsertTime;
     private long tmapInsertMemory;
     private long hashDeleteTime;
-    private long hashDeleteMemory;
+    private long hashDeleteMemory; 
     private long tmapDeleteTime;
     private long tmapDeleteMemory;
     private long hashSearchTime;
     private long hashSearchMemory;
     private long tmapSearchTime;
-    private long tmapSearchMemory;
-    private String fileName;
-    private String operationType;
-    private String structureType;
+    private long tmapSearchMemory; 
+    private String fileName; // This saves what filename we are using
+    private String operationType; // This saves what operation we are doing
+    private String structureType; // This saves what structure we are using
+    private ArrayList<String> files; // This arraylist contains our filenames
     
-    public PerformanceAnalysisHash(){
+    public PerformanceAnalysisHash() {
     }
 
-    public PerformanceAnalysisHash(String details_filename){
-        //TODO: Save the details of the test data files
+    /**
+     * This method constructs our PerformanceAnalysisHash 
+     * 
+     * @param details_filename: the file we want to use to compare
+     */
+    public PerformanceAnalysisHash(String details_filename) {
         try {
             loadData(details_filename);
         }
@@ -36,17 +42,25 @@ public class PerformanceAnalysisHash<K, V> implements PerformanceAnalysis {
             System.out.println("IOException occurred.");
         }
     }
+    
+    /**
+     * The important function that compares the implemented HashTable with
+     * TreeMap of Java and generates the table with all the comparison details
+     * This can internally call - compareInsertion, compareDeletion, CompareSearch
+     * for all the test data provided.
+     */
     @Override
     public void compareDataStructures() {
-        //TODO: Complete this function which compares the ds and generates the details
         compareInsertion();
         compareDeletion();
         compareSearch();
     }
 
+    /** 
+    * Function used to print out the final report
+    */
     @Override
     public void printReport() {
-        //TODO: Complete this method
         System.out.println("------------------------------------------------------------------------------------------------");
         System.out.println("|            FileName|      Operation| Data Structure|   Time Taken (micro sec)|     Bytes Used|");
         System.out.println("------------------------------------------------------------------------------------------------");
@@ -60,7 +74,16 @@ public class PerformanceAnalysisHash<K, V> implements PerformanceAnalysis {
         System.out.println("------------------------------------------------------------------------------------------------");
     }
     
+    /**
+     * This method helps print the report depending on what file, structure, and operation we are using
+     * 
+     * @param operationType: the operation we are testing
+     * @param structureType: the structure we are testing
+     * @param time: the time variable to check
+     * @param mem: the memory variable to check
+     */
     private void printHelper(String operationType, String structureType, long time, long mem) {
+        time = time / 1000;
         System.out.print("|");
         for (int i = 0; i < 20 - fileName.length(); i++) {
             System.out.print(" ");
@@ -84,13 +107,18 @@ public class PerformanceAnalysisHash<K, V> implements PerformanceAnalysis {
         System.out.println(mem + "|");
     }
 
+    /**
+     * This method calls on helper methods to compare the insertion operation
+     */
     @Override
     public void compareInsertion() {
-        //TODO: Complete this method
         compareHashInsertion();
         compareTreeMapInsertion();
     }
     
+    /**
+     * This method tests the hash insertion
+     */
     private void compareHashInsertion() {
         long curTime = System.nanoTime();
         long curMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
@@ -102,6 +130,9 @@ public class PerformanceAnalysisHash<K, V> implements PerformanceAnalysis {
         hashInsertMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() - curMem;
     }
     
+    /**
+     * This method tests the treemap insertion
+     */
     private void compareTreeMapInsertion() {
         long curTime = System.nanoTime();
         long curMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
@@ -113,13 +144,18 @@ public class PerformanceAnalysisHash<K, V> implements PerformanceAnalysis {
         tmapInsertMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() - curMem;
     }
 
+    /**
+     * This method calls on helper methods to compare the deletion operation
+     */
     @Override
     public void compareDeletion() {
-        //TODO: Complete this method
         compareHashDeletion();
         compareTreeMapDeletion();
     }
     
+    /**
+     * This method tests the hash deletion
+     */
     private void compareHashDeletion() {
         hash = new HashTable<K, V>(50, .75); 
         for (int i = 0; i < inputData.size(); i++) {
@@ -134,6 +170,9 @@ public class PerformanceAnalysisHash<K, V> implements PerformanceAnalysis {
         hashDeleteMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() - curMem;
     }
     
+    /**
+     * This method tests the treemap deletion
+     */
     private void compareTreeMapDeletion() {
         tmap = new TreeMap();
         for (int i = 0; i < inputData.size(); i++) {
@@ -148,13 +187,18 @@ public class PerformanceAnalysisHash<K, V> implements PerformanceAnalysis {
         tmapDeleteMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() - curMem;
     }
 
+    /**
+     * This method calls on helper methods to compare the search operation
+     */
     @Override
     public void compareSearch() {
-        //TODO: Complete this method
         compareHashSearch();
         compareTreeMapSearch();
     }
     
+    /**
+     * This method tests the hash search
+     */
     private void compareHashSearch() {
         hash = new HashTable<K, V>(1000000, .75); 
         for (int i = 0; i < inputData.size(); i++) {
@@ -169,6 +213,9 @@ public class PerformanceAnalysisHash<K, V> implements PerformanceAnalysis {
         hashSearchMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() - curMem;
     }
     
+    /**
+     * This method tests the treemap search
+     */
     private void compareTreeMapSearch() {
         tmap = new TreeMap();
         for (int i = 0; i < inputData.size(); i++) {
@@ -190,12 +237,24 @@ public class PerformanceAnalysisHash<K, V> implements PerformanceAnalysis {
      */
     @Override
     public void loadData(String filename) throws IOException {
-
         // Opens the given test file and stores the objects each line as a string
+        ArrayList<String> files = new ArrayList<>();
+        File datafile = new File(filename);
+        BufferedReader brdr = new BufferedReader(new FileReader(datafile));
+        String fileline = brdr.readLine();
+        while (fileline != null) {
+            String[] string = fileline.split(",");
+            String newLine = string[0];
+            files.add(newLine);
+        }
+        brdr.close();
+        for (int i = 1; i < files.size(); i++) {
+            // loadData(files.get(i));
+            System.out.println(files.get(i));
+        }
         fileName = filename.substring(5);
         File file = new File(filename);
         BufferedReader br = new BufferedReader(new FileReader(file));
-//        inputData = new ArrayList<>();
         String line = br.readLine();
         while (line != null) {
             inputData.add(line);
@@ -203,9 +262,4 @@ public class PerformanceAnalysisHash<K, V> implements PerformanceAnalysis {
         }
         br.close();
     }
-    
-//    public static void main(String[] args) {
-//        PerformanceAnalysisHash analysis = new PerformanceAnalysisHash("StringSmall.txt");
-//        analysis.compareDataStructures();
-//    }
 }
